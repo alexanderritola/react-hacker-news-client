@@ -6,7 +6,7 @@ var styles = require('./styles');
 //var qwest = require('qwest');
 var Promise = require('es6-promise').Promise;
 
-var addons = require('react-addons');
+var addons = require('react/addons');
 
 var HttpReqMixin = {
 	getJSON(url) {
