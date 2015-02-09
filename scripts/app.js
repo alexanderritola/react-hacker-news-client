@@ -1,12 +1,10 @@
 'use strict';
 
-var React = require('react');
+var React = require('react/addons');
 var styles = require('./styles');
 
 //var qwest = require('qwest');
 var Promise = require('es6-promise').Promise;
-
-var addons = require('react/addons');
 
 var HttpReqMixin = {
 	getJSON(url) {
@@ -36,7 +34,9 @@ var Post = React.createClass({
 	render() {
 		return (
 			<div style={styles.topPosts.post}>
-				<span>{this.props.data.title}</span>
+				<a href={this.props.data.url}>
+					<span>{this.props.data.title}</span>
+				</a>
 			</div>
 		);
 	}

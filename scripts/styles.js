@@ -1,6 +1,6 @@
 var styles = {
 	h1: {
-		color:	'green'
+		color:	'orange'
 	},
 	topPosts: {
 		container: {
