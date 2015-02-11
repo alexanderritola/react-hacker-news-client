@@ -1,83 +1,37 @@
 'use strict';
 
-var React = require('react/addons');
+var React = require('react');
 var styles = require('./styles');
-
-//var qwest = require('qwest');
-var Promise = require('es6-promise').Promise;
-
-var HttpReqMixin = {
-	getJSON(url) {
-		return new Promise(function(resolve, reject) {
-			var req = new XMLHttpRequest();
-			req.open('GET', url);
-
-			req.onload = function() {
-				if (req.status == 200) {
-					resolve(req.response);
-				}
-				else {
-					reject(Error(req.statusText));
-				}
-			};
-
-			req.onerror = function() {
-				reject(Error("Network Error"));
-			};
-
-			req.send();
-		}).then(JSON.parse);
-	}
-};
+var HNAPIMixin = require('./hnapi');
 
 var Post = React.createClass({
+	style: styles.topPosts.post,
 	render() {
 		return (
-			<div style={styles.topPosts.post}>
-				<a href={this.props.data.url}>
-					<span>{this.props.data.title}</span>
-				</a>
+			<div style={this.style.container}>
+				<div style={this.style.score.container}>
+					<span style={this.style.score}>
+						{this.props.data.score}
+					</span>
+				</div>
+				<div style={this.style.postdata.container}>
+					<a href={this.props.data.url}>
+						<span style={this.style.title}>
+							{this.props.data.title}
+						</span>
+					</a>
+				</div>
 			</div>
 		);
 	}
 });
 
 var TopPosts = React.createClass({
-	mixins: [HttpReqMixin],
-	getInitialState() {
-		return {
-			topStories: []
-		};
-	},
-
-	fetchTopPosts() {
-		this.getJSON("https://hacker-news.firebaseio.com/v0/topstories.json")
-			.then(function(postIds) {
-
-				for(i in postIds){
-					this.getJSON("https://hacker-news.firebaseio.com/v0/item/" + postIds[i] + ".json")
-						.then(function(post) {
-
-							this.setState({topStories: this.state.topStories.concat([post])});
-
-						}.bind(this));
-				}
-			}.bind(this));
-
-	},
-
-	componentDidMount() {
-		this.fetchTopPosts();
-	},
+	mixins: [HNAPIMixin],
+	style: styles.topPosts.container,
 
 	render() {
-		return (
-			<div style={styles.topPosts.container}>
-				{this.state.topStories.map(function(story) {
-					return <Post key={story.id} data={story} />;
-				})}
-			</div>
-		);
+		return this.renderTopPostsFromPost(Post, this.style);
 	}
 });
 
@@ -86,7 +40,7 @@ var App = React.createClass({
 		return (
 			<div>
 			<h1 style={styles.h1}>Hello, HN.</h1>
-			<TopPosts style={styles.topPosts.container}/>
+			<TopPosts />
 			</div>
 		);
 	}
